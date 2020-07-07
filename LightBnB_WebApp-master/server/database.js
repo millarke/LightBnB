@@ -10,7 +10,7 @@
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
 
-const db = require('../db')
+const db = require('../db');
 
 /// Users
 
