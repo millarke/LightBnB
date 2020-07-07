@@ -1,14 +1,16 @@
-const { Pool } = require('pg');
+// const { Pool } = require('pg');
 
-const pool = new Pool({
-  user: 'vagrant',
-  password: '123',
-  host: 'localhost',
-  database: 'lightbnb'
-});
+// const pool = new Pool({
+//   user: 'vagrant',
+//   password: '123',
+//   host: 'localhost',
+//   database: 'lightbnb'
+// });
 
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
+
+const db = require('../db')
 
 /// Users
 
@@ -25,7 +27,7 @@ const getUserWithEmail = function(email) {
     WHERE email LIKE $1;
   `;
 
-  return pool.query(queryString, [email])
+  return db.query(queryString, [email])
     // .then(res => res.rows[0])
     .then(res => {
       // if no rows return null
@@ -50,7 +52,7 @@ const getUserWithEmail = function(email) {
 };
 
 // const getAllProperties = function(options, limit = 10) {
-//   return pool.query(`
+//   return db.query(`
 //   SELECT * FROM properties
 //   LIMIT $1
 //   `, [limit])
@@ -72,7 +74,7 @@ const getUserWithId = function(id) {
     WHERE id = $1;
   `;
 
-  return pool.query(queryString, [id])
+  return db.query(queryString, [id])
     // .then(res => res.rows[0])
     .then(res => {
       console.log("get id: ", res.rows);
@@ -110,7 +112,7 @@ const addUser = function(user) {
   RETURNING *;
   `;
 
-  return pool.query(queryString, [user.name, user.password, user.email])
+  return db.query(queryString, [user.name, user.password, user.email])
     .then(res => res.rows)
     .catch(err => console.error('query error', err.stack));
 };
@@ -142,7 +144,7 @@ GROUP BY properties.id, reservations.id
 ORDER BY reservations.start_date
 LIMIT $2
 `;
-  return pool.query(query, [guest_id, limit])
+  return db.query(query, [guest_id, limit])
     .then(res => res.rows)
     .catch(err => console.error(err));
 };
@@ -203,11 +205,11 @@ const getAllProperties = function(options, limit = 10) {
   console.log(queryString, queryParams);
 
   // 6
-  return pool.query(queryString, queryParams)
+  return db.query(queryString, queryParams)
     .then(res => res.rows)
     .catch(err => console.error('query error', err.stack));
 
-  // return pool.query(`
+  // return db.query(`
   // SELECT * FROM properties
   // LIMIT $1
   // `, [limit])
@@ -229,7 +231,7 @@ const addProperty = function(property) {
   RETURNING *
   `;
 
-  return pool.query(queryString, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.street, property.city, property.province, property.post_code, property.country, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms])
+  return db.query(queryString, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.street, property.city, property.province, property.post_code, property.country, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms])
     .then(res => res.rows)
     .catch(err => console.log(err));
     
